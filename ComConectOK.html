@@ -1,0 +1,84 @@
+<!DOCTYPE html>
+
+<HEAD>
+    <meta http-equiv='content-type' content='text/html; charset=UTF-8'/>
+    <STYLE>#map {
+        HEIGHT: 100%;
+        WIDTH: 100% <!-- 400 px-- >
+    }
+    </STYLE>
+    <SCRIPT>
+        var xForm1C;
+
+        function SetForm1C(Form1C) {
+            xForm1C = Form1C;
+        }
+
+        function Call1C(param1) {
+            xForm1C.Function1C(param1);
+
+        }
+
+        function GetComGoogleMapFromMap(Form1C) {
+            xForm1C = Form1C;
+            xForm1C.Function1CGooglMaps(map);
+        }
+
+        function setCenterAndfitBounds(LatMin, LatMax, LngMin, LngMax) {
+            var west = LngMin;
+            var east = LngMax;
+            var north = LatMax;
+            var south = LatMin;
+
+            var sw = new google.maps.LatLng(south, west);
+            var ne = new google.maps.LatLng(north, east);
+
+            var bounds = new google.maps.LatLngBounds(sw, ne);
+            var centerpoint = new google.maps.LatLng((north + south) / 2, (east + west) / 2);
+
+            map.setCenter(centerpoint);
+            map.fitBounds(bounds);
+        }
+
+        function SetMapMarker(LatPoint, LngPoint, TxtTitle) {
+            var markerLatLng = new google.maps.LatLng(LatPoint, LatPoint);
+            var options = {
+                visible: true,
+                position: markerLatLng,
+                title: TxtTitle,
+                clickable: true,
+                draggable: false,
+                bouncy: false,
+                map: map
+            };
+            var marker = new google.maps.Marker(options);
+        }
+
+    </SCRIPT>
+</HEAD>
+<BODY>
+<H3>Google Maps</H3>
+<DIV id=map></DIV>
+<SCRIPT>
+    var map;
+
+    function initMap() {
+        var uluru = {lat: 53.883868, lng: 27.5249349};
+        map = new google.maps.Map(document.getElementById('map'), {
+            zoom: 7,
+            center: uluru
+        });
+        var marker = new google.maps.Marker({
+            position: uluru,
+            map: map
+        });
+    }
+</SCRIPT>
+<SCRIPT defer
+        src="https://maps.googleapis.com/maps/api/js?v=3key=AIzaSyBRDA6H6AJxB8iMbOeK6msVxMRTnyu9bSk&amp;callback=initMap"
+        async>
+</SCRIPT>
+
+<BR>
+</BODY>
+</HTML>

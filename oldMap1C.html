@@ -1,0 +1,387 @@
+<html>
+<head>
+    <meta http-equiv='content-type' content='text/html; charset=UTF-8'/>
+    <meta http-equiv='X-UA-Compatible' content='IE=edge'/>
+    <meta http-equiv='Cache-Control' content='no-cache, no-store, must-revalidate , no-transform'/>
+    <meta http-equiv='Pragma' content='no-cache'/>
+    <meta http-equiv='Expires' content='0'/>
+    <script src='https://maps.googleapis.com/maps/api/js?v=3&key=AIzaSyBpaSK7UkB7Qnr1NZwrBEUH03asJEcrJms'></script>
+
+    <script type='text/javascript'>
+
+        function GMapInit() {
+            var myarr = [];
+            var arrMarkers = [];
+            var arrMarkersRoute = [];
+            var BeginLat = 0;
+            var BeginLng = 0;
+            var BeginLatFirst = 0;
+            var BeginLngFirst = 0;
+            var EndLat = 0;
+            var EndLng = 0;
+            var Code = '';
+            var myListener1;
+            var myListener2;
+            var mapType = '';
+
+            function checkData() {
+                var fso = new ActiveXObject('Scripting.FileSystemObject');
+                var existFile = fso.FileExists('C:\\Users\\homiksergadm\\AppData\\Local\\Temp\\2\\map_query_1.txt');
+
+                if (existFile == true) {
+                    myarr.length = 0;
+                    ParamsFile = fso.OpenTextFile('C:\\Users\\homiksergadm\\AppData\\Local\\Temp\\2\\map_query_1.txt', 1);
+                    i = -1;
+                    while (!ParamsFile.AtEndOfStream) {
+                        i++;
+                        str = ParamsFile.ReadLine();
+                        if (str.length == 0) {
+                            continue;
+                        }
+                        if (i == 0) {
+                            mapType = str;
+                        }
+                        else {
+                            index1 = str.indexOf('>');
+                            if (index1 == -1) {
+                                str1 = '';
+                                str2 = str;
+                            }
+                            else {
+                                str1 = str.substring(0, index1);
+                                str2 = str.substring(index1 + 1, str.length);
+                            }
+                            if (mapType == 'маршрут') {
+                                switch (i) {
+                                    case 1:
+                                        index1 = str2.indexOf(',');
+                                        if (index1 != -1) {
+                                            BeginLat = parseFloat(str2.substring(0, index1));
+                                            BeginLng = parseFloat(str2.substring(index1 + 1, str2.length));
+                                            BeginLatFirst = BeginLat;
+                                            BeginLngFirst = BeginLng;
+                                        }
+                                        break;
+                                    default:
+                                        var myPoint = [];
+                                        myPoint[0] = str1;
+                                        myPoint[1] = str2;
+                                        myarr[i - 2] = myPoint;
+                                }
+                            }
+                            else {
+                                var myPoint = [];
+                                myPoint[0] = str1;
+                                myPoint[1] = str2;
+                                myarr[i - 1] = myPoint;
+                            }
+                        }
+                    }
+
+                    ParamsFile.Close();
+                    file = fso.GetFile('C:\\Users\\homiksergadm\\AppData\\Local\\Temp\\2\\map_query_1.txt');
+                    file.Delete();
+                    file = 0;
+                    ParamsFile = 0;
+                    calcRoute();
+                }
+
+                var existFile = fso.FileExists('C:\\Users\\homiksergadm\\AppData\\Local\\Temp\\2\\map_query_2.txt');
+                if (existFile == true) {
+                    ParamsFile = fso.OpenTextFile('C:\\Users\\homiksergadm\\AppData\\Local\\Temp\\2\\map_query_2.txt', 1);
+                    while (!ParamsFile.AtEndOfStream) {
+                        str = ParamsFile.ReadLine();
+                        index1 = str.indexOf('clearListener');
+                        if (index1 != -1) {
+                            ObjectMarker.setVisible(false);
+                            google.maps.event.removeListener(myListener1);
+                            google.maps.event.removeListener(myListener2);
+                        }
+                        index1 = str.indexOf('addListener');
+                        if (index1 != -1) {
+                            Code = str.substring(index1 + 12, str.length);
+                            str = ParamsFile.ReadLine();
+                            index1 = str.indexOf(',');
+                            if (index1 != -1) {
+                                ObjectLat = parseFloat(str.substring(0, index1));
+                                ObjectLng = parseFloat(str.substring(index1 + 1, str.length));
+                            }
+                            ObjectMarker.setPosition(new google.maps.LatLng(ObjectLat, ObjectLng));
+                            ObjectMarker.setVisible(true);
+                            myListener1 = google.maps.event.addListener(map, 'click', function (event) {
+                                if (event != null) {
+                                    writeData(event.latLng)
+                                }
+                            });
+                            myListener2 = google.maps.event.addListener(map, 'dragend', function (event) {
+                                if (event != null) {
+                                    writeData(event.latLng)
+                                }
+                            });
+                        }
+                        break;
+                    }
+                    ParamsFile.Close();
+                    file = fso.GetFile('C:\\Users\\homiksergadm\\AppData\\Local\\Temp\\2\\map_query_2.txt');
+                    file.Delete();
+                    file = 0;
+                    ParamsFile = 0;
+                }
+                fso = 0;
+            }
+
+            function writeData(latLng) {
+                if (latLng != null) {
+                    ObjectMarker.setPosition(latLng);
+                    var fso2 = new ActiveXObject('Scripting.FileSystemObject');
+                    DataFile = fso2.OpenTextFile('C:\\Users\\homiksergadm\\AppData\\Local\\Temp\\2\\map_route.txt', 2, true);
+                    DataFile.WriteLine(Code);
+                    DataFile.WriteLine('' + latLng);
+                    DataFile.Close();
+                    DataFile = 0;
+                    fso2 = 0;
+                }
+            }
+
+            var directionsService = new google.maps.DirectionsService();
+
+            var DirectionsArray = [];
+
+            var MapOptions = {
+                overviewMapControl: true,
+                overviewMapControlOptions: {opened: true},
+                streetViewControl: false,
+                mapTypeId: google.maps.MapTypeId.ROADMAP
+            };
+
+            var map = new google.maps.Map(document.getElementById('GMapContainer'), MapOptions);
+
+            var options = {
+                visible: false,
+                position: new google.maps.LatLng(53.805333174, 27.584449053),
+                title: 'перетягивайте этот маркер на искомую точку маршрута',
+                clickable: true,
+                draggable: true,
+                bouncy: false,
+                map: map
+            };
+
+            var ObjectMarker = new google.maps.Marker(options);
+
+            function checkBounds() {
+                if (boolBounds == true) {
+                    for (var i = 0; i < arrMarkersRoute.length; i++) {
+                        arrMarkersRoute[i].setVisible(false);
+                    }
+                    arrMarkersRoute.length = 0;
+                    map.setCenter(centerpoint);
+                    map.fitBounds(bounds);
+                    strABC = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz';
+                    var options = {
+                        visible: true,
+                        position: new google.maps.LatLng(BeginLatFirst, BeginLngFirst),
+                        title: 'Старт', clickable: true, draggable: false,
+                        bouncy: false,
+                        map: map,
+                        icon: 'http://www.google.com/mapfiles/markerA.png'
+                    };
+
+                    arrMarkersRoute[0] = new google.maps.Marker(options);
+                    for (var i = 0; i < myarr.length; i++) {
+                        str = myarr[i][1];
+                        index1 = str.indexOf(',');
+                        if (index1 != -1) {
+                            ObjectLat = parseFloat(str.substring(0, index1));
+                            ObjectLng = parseFloat(str.substring(index1 + 1, str.length));
+                        }
+                        strN = strABC.substring(i + 1, i + 2);
+                        var options = {
+                            visible: true,
+                            position: new google.maps.LatLng(ObjectLat, ObjectLng),
+                            title: myarr[i][0],
+                            clickable: true,
+                            draggable: false,
+                            bouncy: false,
+                            map: map,
+                            icon: 'http://www.google.com/mapfiles/marker' + strN + '.png'
+                        };
+                        arrMarkersRoute[i + 1] = new google.maps.Marker(options);
+                    }
+                    boolBounds = false;
+                }
+            }
+
+            function calcRoute() {
+                if (mapType == 'маршрут') {
+                    var wayptsArray = [];
+                    for (var i = 0; i < DirectionsArray.length; i++) {
+                        DirectionsArray[i].setMap(null);
+                    }
+                    DirectionsArray.length = 0;
+                    iPoint = 0;
+                    intLeg = 1;
+                    wayptsArray[0] = [];
+                    var requestArray = [];
+                    while (iPoint < myarr.length) {
+                        wayptsArray[intLeg - 1].push({location: myarr[iPoint][1], stopover: true});
+                        if ((intLeg == 1 & wayptsArray[intLeg - 1].length == 9) | (intLeg > 1 & wayptsArray[intLeg - 1].length == 10) | iPoint == myarr.length - 1) {
+                            str2 = wayptsArray[intLeg - 1][wayptsArray[intLeg - 1].length - 1].location;
+                            index1 = str2.indexOf(',');
+                            if (index1 != -1) {
+                                EndLat = parseFloat(str2.substring(0, index1));
+                                EndLng = parseFloat(str2.substring(index1 + 1, str2.length));
+                            }
+                            wayptsArray[intLeg - 1].length = wayptsArray[intLeg - 1].length - 1;
+                            requestArray[intLeg - 1] = {
+                                origin: new google.maps.LatLng(BeginLat, BeginLng),
+                                destination: new google.maps.LatLng(EndLat, EndLng),
+                                waypoints: wayptsArray[intLeg - 1],
+                                optimizeWaypoints: false,
+                                travelMode: google.maps.DirectionsTravelMode.DRIVING
+                            };
+                            directionsService.route(requestArray[intLeg - 1],
+                                function (response, status) {
+                                    if (status == google.maps.DirectionsStatus.OK) {
+
+                                        for (var i = 0; i < arrMarkers.length; i++) {
+                                            arrMarkers[i].setVisible(false);
+                                        }
+                                        arrMarkers.length = 0;
+
+                                        intL = DirectionsArray.length;
+                                        var rendererOptions = {markerOptions: {visible: false}}
+                                        DirectionsArray[intL] = new google.maps.DirectionsRenderer(rendererOptions);
+                                        DirectionsArray[intL].setMap(map);
+                                        DirectionsArray[intL].setDirections(response);
+                                        var route = response.routes[0];
+
+                                        fso = new ActiveXObject('Scripting.FileSystemObject');
+
+                                        DataFile = fso.OpenTextFile('C:\\Users\\homiksergadm\\AppData\\Local\\Temp\\2\\map_route' + (intL + 1) + '.txt', 2, true, -1);
+                                        var summaryDistance = 0;
+                                        for (var i = 0; i < route.legs.length; i++) {
+                                            summaryDistance += parseFloat(route.legs[i].distance.value);
+                                        }
+                                        DataFile.WriteLine('Расстояние=' + summaryDistance);
+                                        for (var i = 0; i < route.legs.length; i++) {
+                                            DataFile.WriteLine('<отрезок> ' + (i + 1) + ' <старт> ' + route.legs[i].start_address + ' <шиниф> ' + route.legs[i].end_address + ' <расстояние> '
+                                                + route.legs[i].distance.text);
+                                        }
+                                        DataFile.Close();
+
+                                        DataFile = fso.OpenTextFile('C:\\Users\\homiksergadm\\AppData\\Local\\Temp\\2\\map_borders' + (intL + 1) + '.txt', 2, true, -1);
+                                        for (var i = 0; i < route.legs.length; i++) {
+                                            DataFile.WriteLine('>' + route.legs[i].start_address);
+                                            dist = 0;
+                                            for (var i2 = 0; i2 < route.legs[i].steps.length; i2++) {
+                                                dist = dist + route.legs[i].steps[i2].distance.value;
+                                                str = route.legs[i].steps[i2].instructions;
+                                                index1 = str.indexOf('Пересечение границы: ');
+                                                if (index1 != -1) {
+                                                    str = str.substring(index1 + 21, str.length);
+                                                    index1 = str.indexOf('<');
+                                                    if (index1 != -1) {
+                                                        str = str.substring(0, index1);
+                                                    }
+                                                    DataFile.WriteLine(str + '>' + route.legs[i].steps[i2].end_location + '>' + dist);
+                                                }
+                                            }
+                                        }
+                                        DataFile.Close();
+
+                                        DataFile = 0;
+                                        fso = 0;
+                                        boolBounds = true;
+                                    }
+                                    else {
+                                        var options = {
+                                            visible: false,
+                                            position: new google.maps.LatLng(BeginLat, BeginLng),
+                                            title: 'Старт',
+                                            clickable: true,
+                                            draggable: false,
+                                            bouncy: false,
+                                            map: map
+                                        };
+                                        arrMarkers[0] = new google.maps.Marker(options);
+                                        for (var i = 0; i < myarr.length; i++) {
+                                            str = myarr[i][1];
+                                            index1 = str.indexOf(',');
+                                            if (index1 != -1) {
+                                                ObjectLat = parseFloat(str.substring(0, index1));
+                                                ObjectLng = parseFloat(str.substring(index1 + 1, str.length));
+                                            }
+                                            var options = {
+                                                visible: true,
+                                                position: new google.maps.LatLng(ObjectLat, ObjectLng),
+                                                title: myarr[i][0],
+                                                clickable: true,
+                                                draggable: false,
+                                                bouncy: false,
+                                                map: map
+                                            };
+                                            arrMarkers[i + 1] = new google.maps.Marker(options);
+                                        }
+                                    }
+                                }
+                            );
+                            BeginLat = EndLat;
+                            BeginLng = EndLng;
+                            wayptsArray[intLeg] = [];
+                            intLeg++;
+                        }
+                        iPoint++;
+                    }
+                }
+                else {
+                    for (var i = 0; i < DirectionsArray.length; i++) {
+                        DirectionsArray[i].setMap(null);
+                    }
+                    DirectionsArray.length = 0;
+                    for (var i = 0; i < myarr.length; i++) {
+                        str = myarr[i][1];
+                        index1 = str.indexOf(',');
+                        if (index1 != -1) {
+                            ObjectLat = parseFloat(str.substring(0, index1));
+                            ObjectLng = parseFloat(str.substring(index1 + 1, str.length));
+                        }
+                        var options = {
+                            visible: true,
+                            position: new google.maps.LatLng(ObjectLat, ObjectLng),
+                            title: myarr[i][0],
+                            clickable: true,
+                            draggable: false,
+                            bouncy: false,
+                            map: map
+                        };
+                        arrMarkers[i] = new google.maps.Marker(options);
+                    }
+                }
+            };
+
+            var west = 4.2476522;
+            var east = 42.1549598;
+            var north = 55.3258856;
+            var south = 51.2609534;
+            var sw = new google.maps.LatLng(south, west);
+            var ne = new google.maps.LatLng(north, east);
+            var bounds = new google.maps.LatLngBounds(sw, ne);
+            var centerpoint = new google.maps.LatLng((north + south) / 2, (east + west) / 2);
+            var boolBounds = false;
+            setInterval(checkData, 2000);
+            setInterval(checkBounds, 2000);
+            checkData();
+
+            map.setCenter(centerpoint);
+            map.fitBounds(bounds);
+        }
+
+    </script>
+
+</head>
+
+<body onload='GMapInit()' scroll=no leftmargin=0 topmargin=0>
+<div style='width: 756px;border: solid 1px black;height: 629px' id='GMapContainer'></div>
+</body>
+
+</html>

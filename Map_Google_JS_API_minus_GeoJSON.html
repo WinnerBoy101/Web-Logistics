@@ -1,0 +1,258 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <title>Web LOGISTICS</title>
+    <meta name="viewport" content="initial-scale=1.0">
+    <meta http-equiv="x-ua-compatible" content="IE=edge">
+    <meta http-equiv="content-type" content="text/html; charset=UTF-8">
+    <base href="v8config://cfebcdb1-9e9e-4f3a-a57d-d299b18274db/mdobject/id11e2e52b-1080-4929-8b67-fcbf049a0352/8eb4fad1-1fa6-403e-970f-2c12dbb43e23">
+
+    <style>#map {
+
+        HEIGHT: 600px
+    }
+    HTML {
+        HEIGHT: 100%;
+        margin-top: 0px;
+        margin-right: 0px;
+        margin-left: 0px;
+        margin-bottom: 0px;
+        padding: 0px;
+    }
+    BODY {
+        HEIGHT: 100%;
+        PADDING-BOTTOM: 0px;
+        PADDING-TOP: 0px;
+        PADDING-LEFT: 0px;
+        MARGIN: 0px;
+        PADDING-RIGHT: 0px
+    }
+    </style>
+
+    <script src="ftp://10.10.20.199:2121/StoreJS/locationsSTOP.js"></script>
+    <script id="Work1C">
+        var xForm1C;
+        //var locations = []; // From locationsSTOP.js
+        var locations1 = [
+            {lat: 53.9639916, lng: 30.350325},
+            {lat: 53.9639783, lng: 30.3502866},
+            {lat: 51.79124, lng: 8.073915}
+        ];
+
+        var goldStar = {
+            path: 'M 125,5 155,90 245,90 175,145 200,230 125,180 50,230 75,145 5,90 95,90 z',
+            fillColor: 'yellow',
+            fillOpacity: 0.8,
+            scale: 1,
+            strokeColor: 'gold',
+            strokeWeight: 1
+        };
+
+        var imageBeachflag = 'https://developers.google.com/maps/documentation/javascript/examples/full/images/beachflag.png';
+        var imageAvtomobile = 'ftp://10.10.20.199:2121/StoreJS/icon/A_9.png';
+        var imageArow = 'ftp://10.10.20.199:2121/StoreJS/s_z_21.svg';
+
+        function SetForm1C(Form1C) {
+            xForm1C = Form1C;
+        }
+
+        function Call1C(param1) {
+            xForm1C.Function1C(param1);
+
+        }
+
+        function GetComGoogleMapFromMap(Form1C) {
+            xForm1C = Form1C;
+            xForm1C.Function1CGooglMaps(map);
+        }
+    </script>
+    <script id="WorkMapGoole">
+        function setCenterAndfitBounds(LatMin, LatMax, LngMin, LngMax) {
+            var west = Number(LngMin);
+            var east = Number(LngMax);
+            var north = Number(LatMax);
+            var south = Number(LatMin);
+
+            var sw = new google.maps.LatLng(south, west);
+            var ne = new google.maps.LatLng(north, east);
+
+            var bounds = new google.maps.LatLngBounds(sw, ne);
+            var centerpoint = new google.maps.LatLng((north + south) / 2, (east + west) / 2);
+
+            map.setCenter(centerpoint);
+            map.fitBounds(bounds);
+        }
+
+        function SetMapMarker(LatPoint, LngPoint, TxtTitle, GmaP) {
+
+            //alert(typeof LatPoint);
+            if (GmaP == undefined) {
+                GmaP = map
+            }
+
+            var markerLatLng = {lat: Number(LatPoint), lng: Number(LngPoint)};
+            var options = {
+                visible: true,
+                position: markerLatLng,
+                title: TxtTitle,
+                clickable: true,
+                draggable: true,
+                bouncy: false,
+                map: GmaP
+            };
+            var marker = new google.maps.Marker(options);
+        }
+
+        function SetInMapPointSTOP() {
+            // Create an array of alphabetical characters used to label the markers.
+            var labels = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ_ABCDEFGHIJKLMNOPQRSTUVWXYZABCDEFGHIJKLMNOPQRSTUVWXYZABCDEFGHIJKLMNOP' +
+                'QRSTUVWXYZABCDEFGHIJKLMNOPQRSTUVWXYZABCDEFGHIJKLMNOPQRSTUVWXYZABCDEFGHIJKLMNOPQRSTUVWXYZABCDEFGHIJKLMNOP' +
+                'QRSTUVWXYZABCDEFGHIJKLMNOPQRSTUVWXYZABCDEFGHIJKLMNOPQRSTUVWXYZABCDEFGHIJKLMNOPQRSTUVWXYZABCDEFGHIJKLMNOP' +
+                'QRSTUVWXYZABCDEFGHIJKLMNOPQRSTUVWXYZABCDEFGHIJKLMNOPQRSTUVWXYZABCDEFGHIJKLMNOPQRSTUVWXYZABCDEFGHIJKLMNOP' +
+                'QRSTUVWXYZABCDEFGHIJKLMNOPQRSTUVWXYZABCDEFGHIJKLMNOPQRSTUVWXYZABCDEFGHIJKLMNOPQRSTUVWXYZABCDEFGHIJKLMNOP' +
+                'QRSTUVWXYZABCDEFGHIJKLMNOPQRSTUVWXYZABCDEFGHIJKLMNOPQRSTUVWXYZABCDEFGHIJKLMNOPQRSTUVWXYZABCDEFGHIJKLMNOP' +
+                'QRSTUVWXYZABCDEFGHIJKLMNOPQRSTUVWXYZABCDEFGHIJKLMNOPQRSTUVWXYZABCDEFGHIJKLMNOPQRSTUVWXYZABCDEFGHIJKLMNOP' +
+                'QRSTUVWXYZABCDEFGHIJKLMNOPQRSTUVWXYZABCDEFGHIJKLMNOPQRSTUVWXYZABCDEFGHIJKLMNOPQRSTUVWXYZABCDEFGHIJKLMNOP' +
+                'QRSTUVWXYZABCDEFGHIJKLMNOPQRSTUVWXYZABCDEFGHIJKLMNOPQRSTUVWXYZABCDEFGHIJKLMNOPQRSTUVWXYZABCDEFGHIJKLMNOP' +
+                'QRSTUVWXYZABCDEFGHIJKLMNOPQRSTUVWXYZABCDEFGHIJKLMNOPQRSTUVWXYZABCDEFGHIJKLMNOPQRSTUVWXYZABCDEFGHIJKLMNOP' +
+                'QRSTUVWXYZABCDEFGHIJKLMNOPQRSTUVWXYZABCDEFGHIJKLMNOPQRSTUVWXYZABCDEFGHIJKLMNOPQRSTUVWXYZABCDEFGHIJKLMNOP' +
+                'QRSTUVWXYZABCDEFGHIJKLMNOPQRSTUVWXYZABCDEFGHIJKLMNOPQRSTUVWXYZABCDEFGHIJKLMNOPQRSTUVWXYZABCDEFGHIJKLMNOP' +
+                'QRSTUVWXYZABCDEFGHIJKLMNOPQRSTUVWXYZABCDEFGHIJKLMNOPQRSTUVWXYZABCDEFGHIJKLMNOPQRSTUVWXYZABCDEFGHIJKLMNOP' +
+                'QRSTUVWXYZABCDEFGHIJKLMNOPQRSTUVWXYZABCDEFGHIJKLMNOPQRSTUVWXYZABCDEFGHIJKLMNOPQRSTUVWXYZABCDEFGHIJKLMNOP' +
+                'QRSTUVWXYZABCDEFGHIJKLMNOPQRSTUVWXYZABCDEFGHIJKLMNOPQRSTUVWXYZABCDEFGHIJKLMNOPQRSTUVWXYZABCDEFGHIJKLMNOP' +
+                'QRSTUVWXYZABCDEFGHIJKLMNOPQRSTUVWXYZABCDEFGHIJKLMNOPQRSTUVWXYZABCDEFGHIJKLMNOPQRSTUVWXYZABCDEFGHIJKLMNOP';
+
+            // Add some markers to the map.
+            // Note: The code uses the JavaScript Array.prototype.map() method to
+            // create an array of markers based on a given "locations" array.
+            // The map() method here has nothing to do with the Google Maps API.
+            var markers = locations.map(function (location, i) {
+                return new google.maps.Marker({
+                    position: location,
+                    label: labels[i % labels.length]
+                });
+            });
+
+            // Add a marker clusterer to manage the markers.
+            //var markerCluster = new MarkerClusterer(map, markers,
+            //    {imagePath: 'https://github.com/googlemaps/js-marker-clusterer/blob/gh-pages/images/'});\
+            var markerCluster = new MarkerClusterer(map, markers,
+                {imagePath: 'https://developers.google.com/maps/documentation/javascript/examples/markerclusterer/m'});
+        }
+
+        function ExecOneCommand() {
+
+            SetInMapPointSTOP();
+
+            for (var i = 0; i < 20; i++) {
+            }
+        }
+
+
+        function ExecCommand() {
+            code = document.getElementById("ExtCommand").innerHTML;
+            result = "" + eval(code);
+            document.getElementById("BufferData").innerHTML = result;
+        }
+
+        function addScript(src) {
+            var script = document.createElement('script');
+            script.src = src;
+            script.async = false; // чтобы гарантировать порядок выполнения скриптов
+            document.head.appendChild(script);
+        }
+
+    </script>
+    <script >
+        function BeginImportFromGeoJSON() {
+            // начало импорт GeoJSON
+            // Create a <script> tag and set the USGS URL as the source.
+            var script = document.createElement('script');
+
+            // This example uses a local copy of the GeoJSON stored at
+            // http://earthquake.usgs.gov/earthquakes/feed/v1.0/summary/2.5_week.geojsonp
+            script.src = 'https://developers.google.com/maps/documentation/javascript/examples/json/earthquake_GeoJSONP.js';
+            document.getElementsByTagName('head')[0].appendChild(script);
+        }
+
+        function ImportFromGeoJSON() {
+            // Импорт из GeoJSON
+            // Loop through the results array and place a marker for each
+            // set of coordinates.
+            window.eqfeed_callback = function (results) {
+                for (var i = 0; i < results.features.length; i++) {
+                    var coords = results.features[i].geometry.coordinates;
+                    var latLng = new google.maps.LatLng(coords[1], coords[0]);
+                    var marker = new google.maps.Marker({
+                        position: latLng,
+                        map: map
+                    });
+                }
+            }
+        }
+
+    </script>
+
+</head>
+
+
+<body>
+<div id="map"></div>
+<div id="ExtCommand" style="display: none">extcommand</div>
+<div id="EventName" style="display: none">js_event</div>
+<div id="BufferData" style="display: none">js_result</div>
+<input id="SendEvent" style="display: none" type="button">
+<script>
+    var map;
+
+    function initMap() {
+        var uluru = {lat: 53.8838069, lng: 27.4548927}; // Минск
+
+        map = new google.maps.Map(document.getElementById('map'), {
+            zoom: 10,
+            //center: {lat: -28.024, lng: 140.887} // Австралия
+            center: uluru
+        });
+
+        // панель для рисования
+        var drawingManager = new google.maps.drawing.DrawingManager({
+            drawingMode: null,
+            //drawingMode: google.maps.drawing.OverlayType.MARKER,
+            drawingControl: true,
+            drawingControlOptions: {
+                position: google.maps.ControlPosition.TOP_CENTER,
+                drawingModes: ['marker', 'circle', 'polygon', 'polyline', 'rectangle']
+            },
+            markerOptions: {icon: imageAvtomobile},
+            circleOptions: {
+                fillColor: '#ffff00',
+                fillOpacity: 1,
+                strokeWeight: 5,
+                clickable: false,
+                editable: true,
+                zIndex: 1
+            }
+        });
+        drawingManager.setMap(map);
+
+    }
+</script>
+<script src="https://maps.googleapis.com/maps/api/js?v=3.27&key=AIzaSyBRDA6H6AJxB8iMbOeK6msVxMRTnyu9bSk&libraries=drawing&callback=initMap"
+        defer="defer"
+        async=false>
+</script>
+<script src="https://developers.google.com/maps/documentation/javascript/examples/markerclusterer/markerclusterer.js"></script>
+<!--<script src="ftp://10.10.20.199:2121/StoreJS/markerclusterer.js"></script>-->
+
+<div id="param1Value" style="display: none">
+    <BR>Cвязь JS с 1С<BR>
+    <INPUT id=param1 value=Параметр1></INPUT>
+    <INPUT onclick='Call1C(param1.value)' type=button value="Вызов функции в 1С">
+</div>
+<BR>
+<div id="buttonAction" style="display: flex">
+    <INPUT onclick='SetMapMarker(53.8838069,27.4548927,"Минск")' type=button value=Минск></INPUT>
+    <INPUT onclick='ExecOneCommand()' type=button value="Exec One Command"></INPUT>
+</div>
+</body>
+</html>
